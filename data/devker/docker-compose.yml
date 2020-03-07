@@ -1,0 +1,26 @@
+version: "3.7"
+services:
+  postgres:
+    image: "postgres:12"
+    container_name: "hello-prisma2_postgres"
+    ports:
+      - "${APP_PSQL_PORT:-5432}:5432"
+    environment:
+      POSTGRES_DB: "${APP_PSQL_DB:-postgres}"
+      POSTGRES_USER: "${APP_PSQL_USER:-postgres}"
+      POSTGRES_PASSWORD: "${APP_PSQL_PASSWORD:-mypassword654321789}"
+      # The following variables make it easier to use the psql cli inside the container
+      # PGHOST: "localhost"
+      PGDATABASE: "${APP_PSQL_DB:-postgres}"
+      PGUSER: "${APP_PSQL_USER:-postgres}"
+      PGPASSWORD: "${APP_PSQL_PASSWORD:-mypassword654321789}"
+    volumes:
+      - type: "volume"
+        source: "hello-prisma2-data"
+        target: "/var/lib/postgresql/data"
+      - type: "bind"
+        source: "./db-dumps"
+        target: "/root/db-dumps"
+
+volumes:
+  hello-prisma2-data:

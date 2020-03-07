@@ -1,0 +1,157 @@
+datasource sqlite {
+  provider = "sqlite"
+  url = "***"
+}
+
+// datasource psql {
+//   provider = "postgres"
+//   url = "***"
+// }
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./src/gen/client"
+}
+
+model Alias {
+  id   String @id @default(uuid())
+  name String
+}
+
+model GeoDemographics {
+  id         String   @id @default(uuid())
+  createdAt  DateTime @default(now())
+  population Int?
+  latitude   Float?
+  longitude  Float?
+  areaKmSq   Float?
+}
+
+model Country {
+  id           String   @id @default(uuid())
+  createdAt    DateTime @default(now())
+  name         String   @unique
+  abbreviation String
+
+  geoDemographics GeoDemographics?
+}
+
+model State {
+  id           String   @id @default(uuid())
+  createdAt    DateTime @default(now())
+  name         String
+  abbreviation String
+
+  country Country?
+
+  geoDemographics GeoDemographics?
+
+  @@unique([country, name])
+}
+
+model City {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  name      String
+
+  aliases Alias[]
+  country Country?
+  state   State?
+
+  geoDemographics GeoDemographics?
+
+  @@unique([state, name])
+}
+
+model Zip {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  code      String   @unique
+
+  country Country?
+  state   State?
+
+  geoDemographics GeoDemographics?
+}
+
+model Address {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  street1   String   @default("")
+  street2   String   @default("")
+  street3   String   @default("")
+  city      City?
+  state     State?
+  zip       Zip?
+}
+
+model OrganizationAddress {
+  id           String       @id @default(uuid())
+  createdAt    DateTime     @default(now())
+  organization Organization
+  address      Address
+}
+
+model Organization {
+  id        String                @id @default(uuid())
+  name      String
+  addresses OrganizationAddress[]
+}
+
+model PersonName {
+  id         String @id @default(uuid())
+  firstName  String @default("")
+  middleName String @default("")
+  lastName   String @default("")
+  title      String @default("")
+  suffix     String @default("")
+}
+
+model Person {
+  id          String          @id @default(uuid())
+  createdAt   DateTime        @default(now())
+  name        PersonName
+  addresses   PersonAddress[]
+  emails      PersonEmail[]
+  dateOfBirth DateTime?
+}
+
+enum PersonAddressType {
+  HOME WORK OTHER UNKNOWN
+}
+
+model PersonAddress {
+  id        String            @id @default(uuid())
+  createdAt DateTime          @default(now())
+  type      PersonAddressType
+  person    Person
+  address   Address
+}
+
+enum PersonEmailType {
+  PERSONAL WORK OTHER UNKNOWN
+}
+
+model PersonEmail {
+  id        String          @id @default(uuid())
+  createdAt DateTime        @default(now())
+  type      PersonEmailType @default(UNKNOWN)
+  person    Person
+  email     String          @unique
+}
+
+model UserCredentials {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  expiresAt DateTime?
+  user      User      @unique
+  hash      String
+}
+
+model User {
+  id           String           @id @default(uuid())
+  createdAt    DateTime         @default(now())
+  person       Person
+  primaryEmail PersonEmail
+  credentials  UserCredentials?
+}

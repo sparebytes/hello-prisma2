@@ -1,3 +1,9 @@
+# Data
+*.sqlite
+*.db
+!/data/db-dumps/dev-initial.sqlite
+/src/gen
+
 # Logs
 logs
 *.log

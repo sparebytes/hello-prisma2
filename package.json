@@ -1,0 +1,26 @@
+{
+  "name": "hello-prisma2",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Franklin Davenport <sparebytes@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "devker": "cd data/devker && devker",
+    "prisma2": "prisma2",
+    "migrate": "prisma2 migrate --experimental",
+    "nuke": "rimraf src/gen migrations data/dev-data.db",
+    "prisma-fresh": "shx cp data/db-dumps/dev-initial.sqlite data/dev-data.sqlite && prisma2 migrate save --name init2 --experimental && prisma2 migrate up --experimental && prisma2 generate",
+    "start": "ts-node src/index.ts"
+  },
+  "devDependencies": {
+    "devker": "^0.3.3",
+    "prisma2": "2.0.0-preview023",
+    "rimraf": "^3.0.2",
+    "shx": "^0.3.2",
+    "ts-node": "^8.6.2",
+    "typescript": "^3.8.3"
+  },
+  "dependencies": {
+    "@prisma/client": "2.0.0-preview023"
+  }
+}
